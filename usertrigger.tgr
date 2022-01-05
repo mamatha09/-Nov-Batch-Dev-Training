@@ -1,0 +1,21 @@
+trigger usertrigger on User (before insert, before update, before delete, after insert, after update, after delete) {
+    
+    if(Trigger.isAfter && Trigger.isInsert)
+    {
+        System.Debug('Inside After Insert - user Trigger');
+       set<Id> userIds = new set<Id>();
+        Profile marketingProfile = [SELECT Id, Name FROM Profile WHERE Name = 'Custom: Marketing profile' LIMIT 1];
+        
+        for(user user : Trigger.new)
+        {
+            if(user.ProfileId == marketingProfile.Id)
+            {
+               userIds.add(user.Id);
+            }
+        }
+        System.Debug('Making a call to Future Method');
+        
+        Usertriggerhandler.assignPermissionSetTomarketingProfileUsers(userIds);
+    }
+ 
+}
